@@ -9,7 +9,7 @@ jobs:
 
     steps:
 
-      # 1. Project code
+      # 1. Get project
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -19,12 +19,11 @@ jobs:
         with:
           node-version: 20
 
-      # 3. Install Python + Pillow
+      # 3. Create app icon
       - name: Install Pillow
         run: |
           python3 -m pip install --upgrade Pillow
 
-      # 4. Create Gyan AI App Icon
       - name: Create Gyan AI App Icon
         run: |
           mkdir -p assets
@@ -33,23 +32,21 @@ jobs:
           from PIL import Image, ImageDraw, ImageFont
 
           SIZE = 1024
-
-          # Dark background
           img = Image.new("RGB", (SIZE, SIZE), "#080C12")
           draw = ImageDraw.Draw(img)
 
           cx = SIZE // 2
           cy = SIZE // 2
 
-          # Main rounded app background
+          # Main background
           margin = 45
           draw.rounded_rectangle(
-              (margin, margin, SIZE - margin, SIZE - margin),
+              (margin, margin, SIZE-margin, SIZE-margin),
               radius=230,
               fill="#111827"
           )
 
-          # Outer glowing-style ring
+          # Outer AI ring
           r = 350
           draw.ellipse(
               (cx-r, cy-r, cx+r, cy+r),
@@ -65,15 +62,15 @@ jobs:
               width=8
           )
 
-          # AI network nodes
+          # AI nodes
           nodes = [
-              (cx - 275, cy - 240),
-              (cx + 275, cy - 240),
-              (cx - 275, cy + 240),
-              (cx + 275, cy + 240)
+              (cx-275, cy-240),
+              (cx+275, cy-240),
+              (cx-275, cy+240),
+              (cx+275, cy+240)
           ]
 
-          # Lines connecting AI nodes
+          # Connections
           for x, y in nodes:
               draw.line(
                   (cx, cy, x, y),
@@ -81,37 +78,27 @@ jobs:
                   width=7
               )
 
-          # AI nodes
+          # Nodes
           for x, y in nodes:
               draw.ellipse(
                   (x-27, y-27, x+27, y+27),
                   fill="#38BDF8"
               )
 
-          # Main G
-          font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
-
+          # G
           font = ImageFont.truetype(
-              font_path,
+              "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
               360
           )
 
           text = "G"
-
-          bbox = draw.textbbox(
-              (0, 0),
-              text,
-              font=font
-          )
+          bbox = draw.textbbox((0, 0), text, font=font)
 
           tw = bbox[2] - bbox[0]
           th = bbox[3] - bbox[1]
 
           draw.text(
-              (
-                  cx - tw // 2,
-                  cy - th // 2 - 35
-              ),
+              (cx-tw//2, cy-th//2-35),
               text,
               font=font,
               fill="#FFFFFF"
@@ -135,35 +122,34 @@ jobs:
               fill="#FFFFFF"
           )
 
-          # Save icon
           img.save(
               "assets/icon.png",
               "PNG",
               optimize=True
           )
 
-          # Verify
-          check = Image.open("assets/icon.png")
-
-          print("================================")
-          print("GYAN AI ICON CREATED")
-          print("Size:", check.size)
-          print("Format:", check.format)
-          print("Mode:", check.mode)
-          print("================================")
+          print("Gyan AI icon created successfully")
+          print("Size:", img.size)
           PY
 
-      # 5. Install project dependencies
+      # 4. Install EXACT Expo SDK 54 dependencies
+      - name: Install Expo SDK 54
+        run: |
+          npm install expo@~54.0.37 --save-exact
+          npx expo install expo-font@~14.0.12
+          npx expo install @expo/vector-icons@^15.0.3
+
+      # 5. Install remaining project dependencies
       - name: Install Dependencies
         run: |
           npm install
 
-      # 6. Fix Expo dependencies
-      - name: Fix Expo Dependencies
+      # 6. Check installed Expo versions
+      - name: Check Expo Versions
         run: |
-          npx expo install --fix
+          npm list expo expo-font @expo/vector-icons --depth=2
 
-      # 7. Check Expo project
+      # 7. Expo Doctor
       - name: Expo Doctor
         run: |
           npx expo-doctor
@@ -173,7 +159,7 @@ jobs:
         run: |
           npm install -g eas-cli
 
-      # 9. Connect to EAS
+      # 9. Initialize EAS
       - name: Initialize EAS
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
