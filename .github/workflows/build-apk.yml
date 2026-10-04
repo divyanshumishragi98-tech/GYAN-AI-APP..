@@ -16,6 +16,85 @@ jobs:
         with:
           node-version: 20
 
+      - name: Install Python image library
+        run: python3 -m pip install --upgrade Pillow
+
+      - name: Create Gyan AI app icon
+        run: |
+          mkdir -p assets
+
+          python3 <<'PY'
+          from PIL import Image, ImageDraw, ImageFont
+
+          SIZE = 1024
+
+          # Create 1024x1024 RGB PNG
+          img = Image.new("RGB", (SIZE, SIZE), "#0b0f14")
+          draw = ImageDraw.Draw(img)
+
+          # Rounded outer panel
+          margin = 70
+          draw.rounded_rectangle(
+              (margin, margin, SIZE - margin, SIZE - margin),
+              radius=210,
+              fill="#111827"
+          )
+
+          # AI-style circular symbol
+          cx, cy = SIZE // 2, SIZE // 2
+          r = 270
+
+          draw.ellipse(
+              (cx-r, cy-r, cx+r, cy+r),
+              outline="#38bdf8",
+              width=28
+          )
+
+          # G-shaped mark
+          font_paths = [
+              "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+          ]
+
+          font = ImageFont.truetype(font_paths[0], 330)
+
+          text = "G"
+          bbox = draw.textbbox((0, 0), text, font=font)
+          tw = bbox[2] - bbox[0]
+          th = bbox[3] - bbox[1]
+
+          draw.text(
+              (cx - tw // 2, cy - th // 2 - 25),
+              text,
+              font=font,
+              fill="#ffffff"
+          )
+
+          # Small AI nodes
+          nodes = [
+              (cx - 310, cy - 210),
+              (cx + 310, cy - 210),
+              (cx - 310, cy + 210),
+              (cx + 310, cy + 210),
+          ]
+
+          for x, y in nodes:
+              draw.ellipse(
+                  (x-18, y-18, x+18, y+18),
+                  fill="#38bdf8"
+              )
+
+          # Save as proper PNG
+          img.save(
+              "assets/icon.png",
+              format="PNG",
+              optimize=True
+          )
+
+          # Verify the generated image
+          check = Image.open("assets/icon.png")
+          print("Icon created:", check.size, check.mode, check.format)
+          PY
+
       - name: Generate package-lock.json
         run: npm install --package-lock-only
 
