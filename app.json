@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Gyan AI",
+    "slug": "gyan-ai",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+
+    "icon": "./assets/icon.png",
+
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#0b0f14"
+    },
+
+    "android": {
+      "package": "com.divyanshumishra.gyanai",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#0b0f14"
+      },
+      "edgeToEdgeEnabled": true
+    },
+
+    "web": {
+      "favicon": "./assets/icon.png"
+    }
+  }
+}
