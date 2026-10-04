@@ -23,7 +23,14 @@
         }
       ]
     ],
-
+[
+  "expo-build-properties",
+  {
+    "android": {
+      "buildArchs": ["armeabi-v7a"]
+    }
+  }
+  ]
     "android": {
       "package": "com.divyanshumishra.gyanai",
       "permissions": [
