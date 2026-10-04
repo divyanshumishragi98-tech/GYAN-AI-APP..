@@ -3,7 +3,6 @@ import {
   ActivityIndicator,
   Alert,
   Animated,
-  Clipboard,
   FlatList,
   KeyboardAvoidingView,
   Linking,
