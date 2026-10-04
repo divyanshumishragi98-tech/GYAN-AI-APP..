@@ -13,6 +13,8 @@ jobs:
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
+       - name: Generate package-lock.json
+  run: npm install --package-lock-only
         with:
           node-version: 20
           cache: npm
