@@ -14,8 +14,21 @@
       "backgroundColor": "#0b0f14"
     },
 
+    "plugins": [
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Allow Gyan AI to use your microphone.",
+          "speechRecognitionPermission": "Allow Gyan AI to recognize your speech."
+        }
+      ]
+    ],
+
     "android": {
       "package": "com.divyanshumishra.gyanai",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#0b0f14"
