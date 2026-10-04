@@ -21,16 +21,17 @@
           "microphonePermission": "Allow Gyan AI to use your microphone.",
           "speechRecognitionPermission": "Allow Gyan AI to recognize your speech."
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "buildArchs": ["armeabi-v7a"]
+          }
+        }
       ]
     ],
-[
-  "expo-build-properties",
-  {
-    "android": {
-      "buildArchs": ["armeabi-v7a"]
-    }
-  }
-  ]
+
     "android": {
       "package": "com.divyanshumishra.gyanai",
       "permissions": [
