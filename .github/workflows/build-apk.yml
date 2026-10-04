@@ -8,108 +8,196 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Download project
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 2. Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install Python image library
+      # 3. Install Pillow for icon generation
+      - name: Install Pillow
         run: python3 -m pip install --upgrade Pillow
 
-      - name: Create Gyan AI app icon
+      # 4. Automatically create Gyan AI app icon
+      - name: Create Gyan AI Icon
         run: |
           mkdir -p assets
 
           python3 <<'PY'
-          from PIL import Image, ImageDraw, ImageFont
+          from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
           SIZE = 1024
 
-          # Create 1024x1024 RGB PNG
-          img = Image.new("RGB", (SIZE, SIZE), "#0b0f14")
+          # Base image
+          img = Image.new("RGB", (SIZE, SIZE), "#070b12")
+
+          # Separate glow layer
+          glow = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
+          gd = ImageDraw.Draw(glow)
+
+          cx = SIZE // 2
+          cy = SIZE // 2
+
+          # Blue AI glow
+          for radius, alpha in [
+              (390, 15),
+              (350, 20),
+              (310, 28)
+          ]:
+              gd.ellipse(
+                  (
+                      cx-radius,
+                      cy-radius,
+                      cx+radius,
+                      cy+radius
+                  ),
+                  fill=(56, 189, 248, alpha)
+              )
+
+          glow = glow.filter(ImageFilter.GaussianBlur(35))
+          img = Image.alpha_composite(img.convert("RGBA"), glow)
+
           draw = ImageDraw.Draw(img)
 
-          # Rounded outer panel
-          margin = 70
+          # Main rounded app icon background
+          margin = 55
+
           draw.rounded_rectangle(
-              (margin, margin, SIZE - margin, SIZE - margin),
-              radius=210,
-              fill="#111827"
+              (margin, margin, SIZE-margin, SIZE-margin),
+              radius=230,
+              fill="#101827",
+              outline="#26364d",
+              width=8
           )
 
-          # AI-style circular symbol
-          cx, cy = SIZE // 2, SIZE // 2
-          r = 270
+          # Inner AI circle
+          r = 275
 
           draw.ellipse(
               (cx-r, cy-r, cx+r, cy+r),
               outline="#38bdf8",
-              width=28
+              width=26
           )
 
-          # G-shaped mark
-          font_paths = [
-              "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
-          ]
+          # Inner circle
+          r2 = 225
 
-          font = ImageFont.truetype(font_paths[0], 330)
+          draw.ellipse(
+              (cx-r2, cy-r2, cx+r2, cy+r2),
+              outline="#1e9bd7",
+              width=7
+          )
+
+          # G letter
+          font = ImageFont.truetype(
+              "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+              340
+          )
 
           text = "G"
+
           bbox = draw.textbbox((0, 0), text, font=font)
+
           tw = bbox[2] - bbox[0]
           th = bbox[3] - bbox[1]
 
           draw.text(
-              (cx - tw // 2, cy - th // 2 - 25),
+              (
+                  cx - tw//2,
+                  cy - th//2 - 30
+              ),
               text,
               font=font,
-              fill="#ffffff"
+              fill="#ffffff",
+              stroke_width=3,
+              stroke_fill="#dbeafe"
           )
 
-          # Small AI nodes
+          # AI nodes
           nodes = [
-              (cx - 310, cy - 210),
-              (cx + 310, cy - 210),
-              (cx - 310, cy + 210),
-              (cx + 310, cy + 210),
+              (cx-320, cy-210),
+              (cx+320, cy-210),
+              (cx-320, cy+210),
+              (cx+320, cy+210)
           ]
 
           for x, y in nodes:
+
+              # Connection line
+              draw.line(
+                  (x, y, cx, cy),
+                  fill="#1e6f9f",
+                  width=6
+              )
+
+              # Node glow
               draw.ellipse(
-                  (x-18, y-18, x+18, y+18),
+                  (x-32, y-32, x+32, y+32),
+                  fill="#0b2235",
+                  outline="#38bdf8",
+                  width=8
+              )
+
+              draw.ellipse(
+                  (x-12, y-12, x+12, y+12),
                   fill="#38bdf8"
               )
 
-          # Save as proper PNG
+          # Small AI spark
+          draw.polygon(
+              [
+                  (cx+245, cy-330),
+                  (cx+260, cy-285),
+                  (cx+305, cy-270),
+                  (cx+260, cy-255),
+                  (cx+245, cy-210),
+                  (cx+230, cy-255),
+                  (cx+185, cy-270),
+                  (cx+230, cy-285)
+              ],
+              fill="#ffffff"
+          )
+
+          # Save final PNG
+          img = img.convert("RGB")
+
           img.save(
               "assets/icon.png",
               format="PNG",
               optimize=True
           )
 
-          # Verify the generated image
+          # Verify
           check = Image.open("assets/icon.png")
-          print("Icon created:", check.size, check.mode, check.format)
+
+          print("================================")
+          print("GYAN AI ICON CREATED")
+          print("Size:", check.size)
+          print("Format:", check.format)
+          print("Mode:", check.mode)
+          print("================================")
           PY
 
-      - name: Generate package-lock.json
-        run: npm install --package-lock-only
+      # 5. Install Expo-compatible dependencies
+      - name: Install Expo dependencies
+        run: npx expo install --fix
 
-      - name: Install dependencies
-        run: npm install
-
+      # 6. Install EAS CLI
       - name: Install EAS CLI
         run: npm install -g eas-cli
 
+      # 7. Link EAS project
       - name: Initialize EAS Project
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: eas init --account divyanshu143s-team --non-interactive
 
-      - name: Build APK
+      # 8. Build APK
+      - name: Build Gyan AI APK
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: eas build --platform android --profile preview --non-interactive
