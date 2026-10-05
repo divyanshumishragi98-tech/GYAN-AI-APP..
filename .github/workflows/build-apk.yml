@@ -200,7 +200,11 @@ jobs:
           eas init \
             --account divyanshu143s-team \
             --non-interactive
-
+      - name: Configure EAS Update
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          eas update:configure
     
     # 13. Build APK
       - name: Build Gyan AI APK
