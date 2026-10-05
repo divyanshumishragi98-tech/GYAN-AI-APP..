@@ -1929,3 +1929,769 @@ export default function App() {
       </Modal>
     );
   }
+  if (authLoading) {
+    return (
+      <SafeAreaView
+        style={styles.authLoading}
+      >
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor="#080C12"
+        />
+
+        <GyanLogo size={72} />
+
+        <ActivityIndicator
+          size="large"
+          color="#38BDF8"
+          style={{
+            marginTop: 20,
+          }}
+        />
+
+        <Text
+          style={styles.authLoadingText}
+        >
+          Gyan AI शुरू हो रहा है...
+        </Text>
+      </SafeAreaView>
+    );
+  }
+
+
+  if (!token) {
+    return (
+      <AuthScreen
+        onLoginSuccess={
+          loginSuccess
+        }
+      />
+    );
+  }
+
+
+  return (
+    <SafeAreaView
+      style={styles.container}
+    >
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="#080C12"
+      />
+
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.headerButton}
+          onPress={() =>
+            setMenuVisible(true)
+          }
+        >
+          <Ionicons
+            name="menu-outline"
+            size={28}
+            color="#FFFFFF"
+          />
+        </TouchableOpacity>
+
+        <View
+          style={styles.headerCenter}
+        >
+          <GyanLogo size={38} />
+
+          <View>
+            <Text style={styles.title}>
+              Gyan AI
+            </Text>
+
+            <Text
+              style={styles.subtitle}
+            >
+              {username
+                ? `Hi, ${username}`
+                : "AI Assistant"}
+            </Text>
+          </View>
+        </View>
+
+        <TouchableOpacity
+          style={styles.headerButton}
+          onPress={newChat}
+        >
+          <Ionicons
+            name="create-outline"
+            size={24}
+            color="#FFFFFF"
+          />
+        </TouchableOpacity>
+      </View>
+
+
+      <KeyboardAvoidingView
+        style={
+          styles.keyboardContainer
+        }
+        behavior={
+          Platform.OS === "ios"
+            ? "padding"
+            : "height"
+        }
+      >
+        {messages.length === 0 ? (
+          <View style={styles.welcome}>
+            <GyanLogo size={82} />
+
+            <Text
+              style={
+                styles.welcomeTitle
+              }
+            >
+              Welcome to Gyan AI
+            </Text>
+
+            <Text
+              style={
+                styles.welcomeText
+              }
+            >
+              Ask anything, use voice,
+              upload files and continue
+              your projects.
+            </Text>
+          </View>
+        ) : (
+          <FlatList
+            ref={flatListRef}
+            data={messages}
+            keyExtractor={item =>
+              item.id
+            }
+            renderItem={({
+              item,
+            }) => (
+              <MessageBubble
+                item={item}
+                onCopy={async value => {
+                  await Clipboard.setStringAsync(
+                    value
+                  );
+                  Alert.alert(
+                    "Copied",
+                    "Answer copied."
+                  );
+                }}
+                onShare={shareText}
+                onSpeak={speak}
+              />
+            )}
+            contentContainerStyle={
+              styles.messagesContent
+            }
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={
+              false
+            }
+          />
+        )}
+
+
+        {loading && (
+          <View
+            style={
+              styles.loadingRow
+            }
+          >
+            <GyanLogo size={30} />
+
+            <View
+              style={
+                styles.loadingBubble
+              }
+            >
+              <ActivityIndicator
+                size="small"
+                color="#38BDF8"
+              />
+
+              <Text
+                style={
+                  styles.loadingText
+                }
+              >
+                Gyan AI सोच रहा है...
+              </Text>
+            </View>
+          </View>
+        )}
+
+
+        {attachment && (
+          <View
+            style={
+              styles.selectedAttachment
+            }
+          >
+            <Ionicons
+              name={
+                attachment.type ===
+                "image"
+                  ? "image-outline"
+                  : "document-outline"
+              }
+              size={20}
+              color="#38BDF8"
+            />
+
+            <Text
+              style={
+                styles.selectedAttachmentText
+              }
+              numberOfLines={1}
+            >
+              {attachment.name}
+            </Text>
+
+            <TouchableOpacity
+              onPress={
+                removeAttachment
+              }
+            >
+              <Ionicons
+                name="close-circle"
+                size={22}
+                color="#FF6577"
+              />
+            </TouchableOpacity>
+          </View>
+        )}
+
+
+        <View
+          style={
+            styles.composerWrapper
+          }
+        >
+          <TouchableOpacity
+            style={styles.plusButton}
+            onPress={() =>
+              setMenuVisible(true)
+            }
+          >
+            <Ionicons
+              name="add"
+              size={26}
+              color="#D8E2EF"
+            />
+          </TouchableOpacity>
+
+
+          <TextInput
+            value={text}
+            onChangeText={setText}
+            placeholder="Message Gyan AI..."
+            placeholderTextColor="#6F7B8C"
+            multiline
+            maxLength={8000}
+            style={styles.input}
+          />
+
+
+          <TouchableOpacity
+            style={[
+              styles.voiceButton,
+              listening &&
+                styles.voiceActive,
+            ]}
+            onPress={startVoice}
+          >
+            <Ionicons
+              name={
+                listening
+                  ? "mic"
+                  : "mic-outline"
+              }
+              size={22}
+              color="#FFFFFF"
+            />
+          </TouchableOpacity>
+
+
+          <TouchableOpacity
+            style={[
+              styles.sendButton,
+              (!text.trim() ||
+                loading) &&
+                styles.sendDisabled,
+            ]}
+            onPress={
+              sendMessage
+            }
+            disabled={
+              !text.trim() ||
+              loading
+            }
+          >
+            <Ionicons
+              name="arrow-up"
+              size={23}
+              color="#FFFFFF"
+            />
+          </TouchableOpacity>
+        </View>
+
+
+        <Text
+          style={styles.disclaimer}
+        >
+          Gyan AI can make mistakes.
+          Check important information.
+        </Text>
+      </KeyboardAvoidingView>
+
+
+      <Modal
+        visible={menuVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() =>
+          setMenuVisible(false)
+        }
+      >
+        <View
+          style={
+            styles.modalBackground
+          }
+        >
+          <View style={styles.sideMenu}>
+            <View
+              style={styles.menuHeader}
+            >
+              <View
+                style={styles.menuBrand}
+              >
+                <GyanLogo size={48} />
+
+                <View>
+                  <Text
+                    style={styles.menuTitle}
+                  >
+                    Gyan AI
+                  </Text>
+
+                  <Text
+                    style={
+                      styles.menuSubtitle
+                    }
+                  >
+                    {username ||
+                      "AI Assistant"}
+                  </Text>
+                </View>
+              </View>
+
+              <TouchableOpacity
+                onPress={() =>
+                  setMenuVisible(false)
+                }
+              >
+                <Ionicons
+                  name="close"
+                  size={28}
+                  color="#FFFFFF"
+                />
+              </TouchableOpacity>
+            </View>
+
+
+            {renderSideItem(
+              "add-circle-outline",
+              "New Chat",
+              newChat
+            )}
+
+            {renderSideItem(
+              "time-outline",
+              "Chat History",
+              loadHistory
+            )}
+
+            {renderSideItem(
+              "brain-outline",
+              "Long-term Memory",
+              loadMemory
+            )}
+
+            {renderSideItem(
+              "folder-outline",
+              "Projects",
+              () => {
+                setMenuVisible(false);
+                setActivePanel(
+                  "projects"
+                );
+              }
+            )}
+
+            {renderSideItem(
+              "library-outline",
+              "Library",
+              () => {
+                setMenuVisible(false);
+                setActivePanel(
+                  "library"
+                );
+              }
+            )}
+
+            {renderSideItem(
+              "calendar-outline",
+              "Schedule",
+              () => {
+                setMenuVisible(false);
+                setActivePanel(
+                  "schedule"
+                );
+              }
+            )}
+
+            {renderSideItem(
+              "images-outline",
+              "Image Library",
+              () => {
+                setMenuVisible(false);
+                setActivePanel(
+                  "images"
+                );
+              }
+            )}
+
+            {renderSideItem(
+              "sparkles-outline",
+              "AI Tools",
+              () => {
+                setMenuVisible(false);
+                setActivePanel(
+                  "tools"
+                );
+              }
+            )}
+
+            {renderSideItem(
+              "extension-puzzle-outline",
+              "Plugins",
+              () => {
+                setMenuVisible(false);
+                setActivePanel(
+                  "plugins"
+                );
+              }
+            )}
+
+            {renderSideItem(
+              "link-outline",
+              "Remote",
+              () => {
+                setMenuVisible(false);
+                setActivePanel(
+                  "remote"
+                );
+              }
+            )}
+
+            {renderSideItem(
+              "globe-outline",
+              "Manual Web Search",
+              openSearch
+            )}
+
+            {renderSideItem(
+              "logo-youtube",
+              "YouTube Search",
+              openYouTube,
+              "#FF4D67"
+            )}
+
+            <View
+              style={
+                styles.menuDivider
+              }
+            />
+
+            {renderSideItem(
+              "log-out-outline",
+              "Logout",
+              logout,
+              "#FF6577"
+            )}
+          </View>
+
+          <Pressable
+            style={
+              styles.modalOutside
+            }
+            onPress={() =>
+              setMenuVisible(false)
+            }
+          />
+        </View>
+      </Modal>
+
+
+      <Modal
+        visible={historyVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() =>
+          setHistoryVisible(false)
+        }
+      >
+        <View
+          style={styles.panelBg}
+        >
+          <View style={styles.panel}>
+            <View
+              style={styles.panelHeader}
+            >
+              <View>
+                <Text
+                  style={
+                    styles.panelTitle
+                  }
+                >
+                  Chat History
+                </Text>
+
+                <Text
+                  style={
+                    styles.panelSubtitle
+                  }
+                >
+                  Your backend conversations
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                onPress={() =>
+                  setHistoryVisible(
+                    false
+                  )
+                }
+              >
+                <Ionicons
+                  name="close"
+                  size={27}
+                  color="#FFFFFF"
+                />
+              </TouchableOpacity>
+            </View>
+
+            {historyLoading ? (
+              <View
+                style={
+                  styles.centerLoading
+                }
+              >
+                <ActivityIndicator
+                  size="large"
+                  color="#38BDF8"
+                />
+              </View>
+            ) : (
+              <FlatList
+                data={history}
+                keyExtractor={item =>
+                  String(item.id)
+                }
+                renderItem={
+                  renderHistoryItem
+                }
+                ListEmptyComponent={
+                  <Text
+                    style={
+                      styles.emptyText
+                    }
+                  >
+                    अभी कोई पुरानी chat नहीं मिली।
+                  </Text>
+                }
+              />
+            )}
+          </View>
+        </View>
+      </Modal>
+
+
+      <Modal
+        visible={memoryVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() =>
+          setMemoryVisible(false)
+        }
+      >
+        <View
+          style={styles.panelBg}
+        >
+          <View style={styles.panel}>
+            <View
+              style={styles.panelHeader}
+            >
+              <View>
+                <Text
+                  style={
+                    styles.panelTitle
+                  }
+                >
+                  Long-term Memory
+                </Text>
+
+                <Text
+                  style={
+                    styles.panelSubtitle
+                  }
+                >
+                  Memories saved by Gyan AI
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                onPress={() =>
+                  setMemoryVisible(
+                    false
+                  )
+                }
+              >
+                <Ionicons
+                  name="close"
+                  size={27}
+                  color="#FFFFFF"
+                />
+              </TouchableOpacity>
+            </View>
+
+            <FlatList
+              data={memories}
+              keyExtractor={item =>
+                String(item.id)
+              }
+              renderItem={({ item }) => (
+                <View
+                  style={
+                    styles.memoryCard
+                  }
+                >
+                  <Text
+                    style={
+                      styles.memoryKey
+                    }
+                  >
+                    {item.key}
+                  </Text>
+
+                  <Text
+                    style={
+                      styles.memoryValue
+                    }
+                  >
+                    {item.value}
+                  </Text>
+                </View>
+              )}
+              ListEmptyComponent={
+                <Text
+                  style={
+                    styles.emptyText
+                  }
+                >
+                  No memories saved yet.
+                </Text>
+              }
+            />
+
+            <TouchableOpacity
+              style={
+                styles.dangerButton
+              }
+              onPress={clearMemory}
+              disabled={
+                memoryLoading ||
+                memories.length === 0
+              }
+            >
+              <Ionicons
+                name="trash-outline"
+                size={20}
+                color="#FFFFFF"
+              />
+
+              <Text
+                style={
+                  styles.primaryButtonText
+                }
+              >
+                Clear All Memory
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+
+      {renderPanel()}
+
+
+      <Modal
+        visible={webVisible}
+        animationType="slide"
+        onRequestClose={() =>
+          setWebVisible(false)
+        }
+      >
+        <SafeAreaView
+          style={
+            styles.webContainer
+          }
+        >
+          <View
+            style={styles.webHeader}
+          >
+            <TouchableOpacity
+              onPress={() =>
+                setWebVisible(false)
+              }
+            >
+              <Ionicons
+                name="arrow-back"
+                size={25}
+                color="#FFFFFF"
+              />
+            </TouchableOpacity>
+
+            <Text
+              style={styles.webTitle}
+            >
+              Gyan AI Web
+            </Text>
+
+            <View
+              style={{ width: 30 }}
+            />
+          </View>
+
+          {webUrl ? (
+            <WebView
+              source={{
+                uri: webUrl,
+              }}
+              style={
+                styles.webView
+              }
+              javaScriptEnabled
+              domStorageEnabled
+              startInLoadingState
+            />
+          ) : null}
+        </SafeAreaView>
+      </Modal>
+    </SafeAreaView>
+  );
+}
