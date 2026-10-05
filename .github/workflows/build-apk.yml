@@ -38,31 +38,30 @@ jobs:
           cx = SIZE // 2
           cy = SIZE // 2
 
-          # Main background
           margin = 45
+
           draw.rounded_rectangle(
               (margin, margin, SIZE-margin, SIZE-margin),
               radius=230,
               fill="#111827"
           )
 
-          # Outer AI ring
           r = 350
+
           draw.ellipse(
               (cx-r, cy-r, cx+r, cy+r),
               outline="#38BDF8",
               width=24
           )
 
-          # Inner ring
           r2 = 305
+
           draw.ellipse(
               (cx-r2, cy-r2, cx+r2, cy+r2),
               outline="#2563EB",
               width=8
           )
 
-          # AI nodes
           nodes = [
               (cx-275, cy-240),
               (cx+275, cy-240),
@@ -70,7 +69,6 @@ jobs:
               (cx+275, cy+240)
           ]
 
-          # Connections
           for x, y in nodes:
               draw.line(
                   (cx, cy, x, y),
@@ -78,21 +76,24 @@ jobs:
                   width=7
               )
 
-          # Nodes
           for x, y in nodes:
               draw.ellipse(
                   (x-27, y-27, x+27, y+27),
                   fill="#38BDF8"
               )
 
-          # G
           font = ImageFont.truetype(
               "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
               360
           )
 
           text = "G"
-          bbox = draw.textbbox((0, 0), text, font=font)
+
+          bbox = draw.textbbox(
+              (0, 0),
+              text,
+              font=font
+          )
 
           tw = bbox[2] - bbox[0]
           th = bbox[3] - bbox[1]
@@ -104,7 +105,6 @@ jobs:
               fill="#FFFFFF"
           )
 
-          # AI sparkle
           sx = cx + 215
           sy = cy - 235
 
@@ -132,34 +132,62 @@ jobs:
           print("Size:", img.size)
           PY
 
-      # 4. Install EXACT Expo SDK 54 dependencies
+      # 4. Install exact Expo SDK 54
       - name: Install Expo SDK 54
         run: |
           npm install expo@~54.0.37 --save-exact
           npx expo install expo-font@~14.0.12
           npx expo install @expo/vector-icons@^15.0.3
 
-      # 5. Install remaining project dependencies
+      # 5. Install all required Expo packages
+      - name: Install Required Packages
+        run: |
+          npx expo install \
+            expo-image-picker \
+            expo-document-picker \
+            expo-clipboard \
+            expo-speech \
+            expo-speech-recognition \
+            expo-build-properties \
+            expo-notifications \
+            expo-print \
+            expo-sharing \
+            expo-file-system
+
+      # 6. Install remaining project dependencies
       - name: Install Dependencies
         run: |
           npm install
 
-      # 6. Check installed Expo versions
+      # 7. Check important versions
       - name: Check Expo Versions
         run: |
-          npm list expo expo-font @expo/vector-icons --depth=2
+          npm list \
+            expo \
+            expo-font \
+            @expo/vector-icons \
+            expo-image-picker \
+            expo-document-picker \
+            expo-clipboard \
+            expo-speech \
+            expo-speech-recognition \
+            expo-notifications \
+            expo-print \
+            expo-sharing \
+            expo-file-system \
+            --depth=2
 
-      # 7. Expo Doctor
+      # 8. Expo Doctor
       - name: Expo Doctor
         run: |
           npx expo-doctor
 
-      # 8. Install EAS CLI
+      # 9. Install EAS CLI
       - name: Install EAS CLI
         run: |
           npm install -g eas-cli
 
-      # 9. Initialize EAS
+      # 10. Initialize EAS
       - name: Initialize EAS
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
@@ -168,7 +196,7 @@ jobs:
             --account divyanshu143s-team \
             --non-interactive
 
-      # 10. Build APK
+      # 11. Build APK
       - name: Build Gyan AI APK
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
