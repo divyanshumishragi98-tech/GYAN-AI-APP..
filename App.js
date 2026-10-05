@@ -2695,3 +2695,650 @@ export default function App() {
     </SafeAreaView>
   );
 }
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#080C12",
+  },
+
+  keyboardContainer: {
+    flex: 1,
+  },
+
+  authContainer: {
+    flex: 1,
+    backgroundColor: "#080C12",
+  },
+
+  authContent: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+  },
+
+  authTitle: {
+    color: "#FFFFFF",
+    fontSize: 31,
+    fontWeight: "900",
+    marginTop: 16,
+  },
+
+  authSubtitle: {
+    color: "#7F8A9A",
+    fontSize: 14,
+    marginTop: 5,
+    marginBottom: 28,
+  },
+
+  authCard: {
+    width: "100%",
+    maxWidth: 430,
+    backgroundColor: "#0F151E",
+    borderWidth: 1,
+    borderColor: "#1B2736",
+    borderRadius: 20,
+    padding: 18,
+  },
+
+  authTabs: {
+    flexDirection: "row",
+    backgroundColor: "#080C12",
+    borderRadius: 12,
+    padding: 4,
+    marginBottom: 22,
+  },
+
+  authTab: {
+    flex: 1,
+    height: 42,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 9,
+  },
+
+  authTabActive: {
+    backgroundColor: "#172B42",
+  },
+
+  authTabText: {
+    color: "#758296",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+
+  authTabTextActive: {
+    color: "#38BDF8",
+  },
+
+  authLabel: {
+    color: "#D7E0EC",
+    fontSize: 13,
+    fontWeight: "700",
+    marginBottom: 8,
+  },
+
+  authInput: {
+    height: 50,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#243244",
+    backgroundColor: "#080C12",
+    color: "#FFFFFF",
+    paddingHorizontal: 14,
+    marginBottom: 16,
+  },
+
+  authButton: {
+    height: 52,
+    borderRadius: 13,
+    backgroundColor: "#1677C8",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  authButtonText: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "800",
+  },
+
+  authLoading: {
+    flex: 1,
+    backgroundColor: "#080C12",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  authLoadingText: {
+    color: "#8A96A7",
+    marginTop: 15,
+  },
+
+  logo: {
+    backgroundColor: "#111827",
+    borderWidth: 2,
+    borderColor: "#38BDF8",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  logoRing: {
+    borderWidth: 2,
+    borderColor: "#2563EB",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  logoText: {
+    color: "#FFFFFF",
+    fontWeight: "900",
+  },
+
+  header: {
+    height: 64,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 12,
+    backgroundColor: "#0B1018",
+    borderBottomWidth: 1,
+    borderBottomColor: "#17202D",
+  },
+
+  headerButton: {
+    width: 44,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  headerCenter: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+
+  title: {
+    color: "#FFFFFF",
+    fontSize: 19,
+    fontWeight: "800",
+  },
+
+  subtitle: {
+    color: "#718096",
+    fontSize: 10,
+    marginTop: 1,
+  },
+
+  welcome: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 28,
+  },
+
+  welcomeTitle: {
+    color: "#FFFFFF",
+    fontSize: 26,
+    fontWeight: "800",
+    marginTop: 20,
+  },
+
+  welcomeText: {
+    color: "#8793A4",
+    fontSize: 14,
+    lineHeight: 21,
+    textAlign: "center",
+    marginTop: 10,
+    maxWidth: 350,
+  },
+
+  messagesContent: {
+    padding: 12,
+    paddingBottom: 15,
+  },
+
+  messageRow: {
+    flexDirection: "row",
+    marginBottom: 16,
+    gap: 8,
+  },
+
+  userRow: {
+    justifyContent: "flex-end",
+  },
+
+  aiRow: {
+    justifyContent: "flex-start",
+  },
+
+  messageBubble: {
+    maxWidth: "84%",
+    borderRadius: 18,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+  },
+
+  userBubble: {
+    backgroundColor: "#155A94",
+    borderBottomRightRadius: 5,
+  },
+
+  aiBubble: {
+    backgroundColor: "#111923",
+    borderWidth: 1,
+    borderColor: "#1C2938",
+    borderBottomLeftRadius: 5,
+  },
+
+  messageText: {
+    color: "#E8EDF5",
+    fontSize: 15,
+    lineHeight: 22,
+  },
+
+  linkText: {
+    color: "#38BDF8",
+    textDecorationLine: "underline",
+  },
+
+  messageActions: {
+    flexDirection: "row",
+    marginTop: 7,
+  },
+
+  actionButton: {
+    width: 34,
+    height: 30,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  attachment: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 7,
+    backgroundColor: "#0B1621",
+    borderRadius: 8,
+    padding: 8,
+    marginBottom: 8,
+  },
+
+  attachmentName: {
+    flex: 1,
+    color: "#C8D3E1",
+    fontSize: 12,
+  },
+
+  selectedAttachment: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginHorizontal: 10,
+    marginBottom: 5,
+    padding: 9,
+    borderRadius: 12,
+    backgroundColor: "#101A25",
+    borderWidth: 1,
+    borderColor: "#24364A",
+    gap: 8,
+  },
+
+  selectedAttachmentText: {
+    flex: 1,
+    color: "#DDE6F2",
+    fontSize: 12,
+  },
+
+  loadingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 12,
+    marginBottom: 7,
+  },
+
+  loadingBubble: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 9,
+    backgroundColor: "#111923",
+    borderWidth: 1,
+    borderColor: "#1C2938",
+    borderRadius: 15,
+    padding: 10,
+  },
+
+  loadingText: {
+    color: "#8E9AAA",
+    fontSize: 13,
+  },
+
+  composerWrapper: {
+    minHeight: 57,
+    marginHorizontal: 10,
+    marginBottom: 5,
+    borderRadius: 19,
+    borderWidth: 1,
+    borderColor: "#253346",
+    backgroundColor: "#0E151E",
+    flexDirection: "row",
+    alignItems: "flex-end",
+    padding: 6,
+  },
+
+  plusButton: {
+    width: 40,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  input: {
+    flex: 1,
+    color: "#FFFFFF",
+    fontSize: 15,
+    lineHeight: 21,
+    maxHeight: 120,
+    paddingHorizontal: 6,
+    paddingVertical: 10,
+  },
+
+  voiceButton: {
+    width: 42,
+    height: 43,
+    borderRadius: 22,
+    backgroundColor: "#253342",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 5,
+  },
+
+  voiceActive: {
+    backgroundColor: "#A83246",
+  },
+
+  sendButton: {
+    width: 43,
+    height: 43,
+    borderRadius: 22,
+    backgroundColor: "#1677C8",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  sendDisabled: {
+    backgroundColor: "#263342",
+  },
+
+  disclaimer: {
+    color: "#596678",
+    fontSize: 9,
+    textAlign: "center",
+    marginBottom: 5,
+  },
+
+  modalBackground: {
+    flex: 1,
+    flexDirection: "row",
+    backgroundColor: "rgba(0,0,0,0.65)",
+  },
+
+  sideMenu: {
+    width: "84%",
+    maxWidth: 370,
+    height: "100%",
+    backgroundColor: "#0B1018",
+    paddingTop: Platform.OS === "android"
+      ? 32
+      : 10,
+    paddingHorizontal: 16,
+  },
+
+  modalOutside: {
+    flex: 1,
+  },
+
+  menuHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#1B2736",
+  },
+
+  menuBrand: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 11,
+  },
+
+  menuTitle: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "800",
+  },
+
+  menuSubtitle: {
+    color: "#718096",
+    fontSize: 11,
+    marginTop: 2,
+  },
+
+  sideItem: {
+    minHeight: 51,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 13,
+    borderBottomWidth: 1,
+    borderBottomColor: "#111A25",
+  },
+
+  sideItemText: {
+    flex: 1,
+    color: "#D9E1EC",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+
+  menuDivider: {
+    height: 1,
+    backgroundColor: "#1B2736",
+    marginVertical: 8,
+  },
+
+  panelBg: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.72)",
+    justifyContent: "flex-end",
+  },
+
+  panel: {
+    height: "82%",
+    backgroundColor: "#0B1018",
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    borderTopWidth: 1,
+    borderColor: "#1D2938",
+    padding: 18,
+  },
+
+  panelHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#1B2736",
+    marginBottom: 12,
+  },
+
+  panelTitle: {
+    color: "#FFFFFF",
+    fontSize: 20,
+    fontWeight: "800",
+  },
+
+  panelSubtitle: {
+    color: "#718096",
+    fontSize: 11,
+    marginTop: 3,
+  },
+
+  historyItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#101822",
+    borderWidth: 1,
+    borderColor: "#1D2A3A",
+    borderRadius: 13,
+    marginBottom: 9,
+    padding: 9,
+  },
+
+  historyMain: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+
+  historyTitle: {
+    color: "#E5ECF5",
+    fontSize: 14,
+    fontWeight: "700",
+  },
+
+  historyDate: {
+    color: "#69778A",
+    fontSize: 10,
+    marginTop: 4,
+  },
+
+  smallAction: {
+    width: 35,
+    height: 38,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  memoryCard: {
+    backgroundColor: "#101822",
+    borderWidth: 1,
+    borderColor: "#1D2A3A",
+    borderRadius: 13,
+    padding: 13,
+    marginBottom: 10,
+  },
+
+  memoryKey: {
+    color: "#38BDF8",
+    fontWeight: "800",
+    fontSize: 13,
+  },
+
+  memoryValue: {
+    color: "#DCE4EF",
+    fontSize: 14,
+    marginTop: 6,
+    lineHeight: 20,
+  },
+
+  primaryButton: {
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: "#1677C8",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    marginBottom: 14,
+  },
+
+  dangerButton: {
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: "#A83246",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    marginTop: 10,
+  },
+
+  primaryButtonText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "800",
+  },
+
+  simpleCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    backgroundColor: "#101822",
+    borderWidth: 1,
+    borderColor: "#1D2A3A",
+    borderRadius: 13,
+    padding: 13,
+    marginBottom: 9,
+  },
+
+  simpleCardText: {
+    flex: 1,
+    color: "#DCE4EF",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+
+  emptyText: {
+    color: "#718096",
+    textAlign: "center",
+    marginTop: 35,
+    fontSize: 13,
+  },
+
+  centerLoading: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  featureInfo: {
+    color: "#8996A8",
+    textAlign: "center",
+    lineHeight: 21,
+    paddingHorizontal: 20,
+    marginTop: 20,
+  },
+
+  webContainer: {
+    flex: 1,
+    backgroundColor: "#080C12",
+  },
+
+  webHeader: {
+    height: 58,
+    backgroundColor: "#0B1018",
+    borderBottomWidth: 1,
+    borderBottomColor: "#1B2736",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 12,
+  },
+
+  webTitle: {
+    flex: 1,
+    color: "#FFFFFF",
+    textAlign: "center",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+
+  webView: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+  },
+});
