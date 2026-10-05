@@ -13,17 +13,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Node.js
+      # 2. Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      # 3. Create app icon
+      # 3. Install Pillow
       - name: Install Pillow
         run: |
           python3 -m pip install --upgrade Pillow
 
+      # 4. Create Gyan AI App Icon
       - name: Create Gyan AI App Icon
         run: |
           mkdir -p assets
@@ -129,18 +130,22 @@ jobs:
           )
 
           print("Gyan AI icon created successfully")
-          print("Size:", img.size)
           PY
 
-      # 4. Install exact Expo SDK 54
+      # 5. Install exact Expo SDK 54
       - name: Install Expo SDK 54
         run: |
           npm install expo@~54.0.37 --save-exact
           npx expo install expo-font@~14.0.12
           npx expo install @expo/vector-icons@^15.0.3
 
-      # 5. Install all required Expo packages
-      - name: Install Required Packages
+      # 6. Install EAS Update
+      - name: Install EAS Update
+        run: |
+          npx expo install expo-updates
+
+      # 7. Install App Features
+      - name: Install App Features
         run: |
           npx expo install \
             expo-image-picker \
@@ -154,21 +159,21 @@ jobs:
             expo-sharing \
             expo-file-system
 
-      # 6. Install remaining project dependencies
+      # 8. Install remaining dependencies
       - name: Install Dependencies
         run: |
           npm install
 
-      # 7. Check important versions
+      # 9. Check important packages
       - name: Check Expo Versions
         run: |
           npm list \
             expo \
             expo-font \
+            expo-updates \
             @expo/vector-icons \
             expo-image-picker \
             expo-document-picker \
-            expo-clipboard \
             expo-speech \
             expo-speech-recognition \
             expo-notifications \
@@ -177,17 +182,17 @@ jobs:
             expo-file-system \
             --depth=2
 
-      # 8. Expo Doctor
+      # 10. Expo Doctor
       - name: Expo Doctor
         run: |
           npx expo-doctor
 
-      # 9. Install EAS CLI
+      # 11. Install EAS CLI
       - name: Install EAS CLI
         run: |
           npm install -g eas-cli
 
-      # 10. Initialize EAS
+      # 12. Initialize EAS
       - name: Initialize EAS
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
@@ -196,7 +201,7 @@ jobs:
             --account divyanshu143s-team \
             --non-interactive
 
-      # 11. Build APK
+      # 13. Build APK
       - name: Build Gyan AI APK
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
