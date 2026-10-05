@@ -1213,3 +1213,719 @@ export default function App() {
     setAttachment(null);
     setMenuVisible(false);
   }
+  async function choosePhoto() {
+    try {
+      const permission =
+        await ImagePicker
+          .requestMediaLibraryPermissionsAsync();
+
+      if (!permission.granted) {
+        Alert.alert(
+          "Permission",
+          "Gallery permission देना जरूरी है।"
+        );
+        return;
+      }
+
+      const result =
+        await ImagePicker.launchImageLibraryAsync({
+          mediaTypes:
+            ["images"],
+          quality: 0.9,
+          allowsEditing: false,
+        });
+
+      if (
+        !result.canceled &&
+        result.assets?.length
+      ) {
+        const asset =
+          result.assets[0];
+
+        const item = {
+          type: "image",
+          name:
+            asset.fileName ||
+            "Selected image",
+          uri: asset.uri,
+          mimeType:
+            asset.mimeType ||
+            "image/*",
+        };
+
+        setAttachment(item);
+
+        const next =
+          [item, ...imageLibrary];
+
+        setImageLibrary(next);
+        await saveLocal(
+          IMAGE_LIBRARY_KEY,
+          next
+        );
+      }
+
+      setMenuVisible(false);
+    } catch (e) {
+      Alert.alert(
+        "Gallery",
+        String(e?.message || e)
+      );
+    }
+  }
+
+
+  async function takePhoto() {
+    try {
+      const permission =
+        await ImagePicker
+          .requestCameraPermissionsAsync();
+
+      if (!permission.granted) {
+        Alert.alert(
+          "Camera",
+          "Camera permission देना जरूरी है।"
+        );
+        return;
+      }
+
+      const result =
+        await ImagePicker.launchCameraAsync({
+          quality: 0.9,
+          allowsEditing: false,
+        });
+
+      if (
+        !result.canceled &&
+        result.assets?.length
+      ) {
+        const asset =
+          result.assets[0];
+
+        const item = {
+          type: "image",
+          name: "Camera photo",
+          uri: asset.uri,
+          mimeType:
+            asset.mimeType ||
+            "image/*",
+        };
+
+        setAttachment(item);
+
+        const next =
+          [item, ...imageLibrary];
+
+        setImageLibrary(next);
+
+        await saveLocal(
+          IMAGE_LIBRARY_KEY,
+          next
+        );
+      }
+
+      setMenuVisible(false);
+    } catch (e) {
+      Alert.alert(
+        "Camera",
+        String(e?.message || e)
+      );
+    }
+  }
+
+
+  async function chooseFile() {
+    try {
+      const result =
+        await DocumentPicker
+          .getDocumentAsync({
+            type: "*/*",
+            copyToCacheDirectory: true,
+          });
+
+      if (
+        !result.canceled &&
+        result.assets?.length
+      ) {
+        const file =
+          result.assets[0];
+
+        const item = {
+          type: "file",
+          name:
+            file.name ||
+            "Selected file",
+          uri: file.uri,
+          mimeType:
+            file.mimeType ||
+            "application/octet-stream",
+        };
+
+        setAttachment(item);
+
+        const next =
+          [item, ...library];
+
+        setLibrary(next);
+
+        await saveLocal(
+          LIBRARY_KEY,
+          next
+        );
+      }
+
+      setMenuVisible(false);
+    } catch (e) {
+      Alert.alert(
+        "File",
+        String(e?.message || e)
+      );
+    }
+  }
+
+
+  function removeAttachment() {
+    setAttachment(null);
+  }
+
+
+  function openSearch() {
+    const query =
+      text.trim();
+
+    if (!query) {
+      Alert.alert(
+        "Search",
+        "पहले search लिखो।"
+      );
+      return;
+    }
+
+    const url =
+      "https://www.google.com/search?q=" +
+      encodeURIComponent(query);
+
+    setWebUrl(url);
+    setWebVisible(true);
+    setMenuVisible(false);
+  }
+
+
+  function openYouTube() {
+    const query =
+      text.trim();
+
+    if (!query) {
+      Alert.alert(
+        "YouTube",
+        "पहले search लिखो।"
+      );
+      return;
+    }
+
+    const url =
+      "https://www.youtube.com/results?search_query=" +
+      encodeURIComponent(query);
+
+    setWebUrl(url);
+    setWebVisible(true);
+    setMenuVisible(false);
+  }
+
+
+  async function createProject() {
+    Alert.prompt(
+      "New Project",
+      "Project का नाम लिखो:",
+      async value => {
+        const name =
+          String(value || "").trim();
+
+        if (!name) return;
+
+        const item = {
+          id:
+            `${Date.now()}`,
+          name,
+          createdAt:
+            new Date().toISOString(),
+        };
+
+        const next =
+          [item, ...projects];
+
+        setProjects(next);
+
+        await saveLocal(
+          PROJECTS_KEY,
+          next
+        );
+      }
+    );
+  }
+
+
+  async function createSchedule() {
+    Alert.alert(
+      "Schedule",
+      "Schedule feature तैयार है। अगले चरण में backend/local alarm flow को और advanced करेंगे।"
+    );
+  }
+
+
+  function openFutureFeature(title) {
+    Alert.alert(
+      title,
+      `${title} का app structure तैयार है। इसका actual AI/backend connection अगली backend phase में जोड़ेंगे।`
+    );
+  }
+
+
+  function renderHistoryItem({ item }) {
+    const pinned =
+      pinnedChats.some(
+        x =>
+          String(x.id) ===
+          String(item.id)
+      );
+
+    return (
+      <View style={styles.historyItem}>
+        <TouchableOpacity
+          style={styles.historyMain}
+          onPress={() =>
+            openHistoryChat(item)
+          }
+        >
+          <Ionicons
+            name="chatbubble-outline"
+            size={20}
+            color="#38BDF8"
+          />
+
+          <View style={{ flex: 1 }}>
+            <Text
+              style={styles.historyTitle}
+              numberOfLines={1}
+            >
+              {item.title ||
+                "Untitled Chat"}
+            </Text>
+
+            <Text
+              style={styles.historyDate}
+              numberOfLines={1}
+            >
+              {item.updated_at ||
+                item.created_at ||
+                ""}
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.smallAction}
+          onPress={() =>
+            togglePin(item)
+          }
+        >
+          <Ionicons
+            name={
+              pinned
+                ? "pin"
+                : "pin-outline"
+            }
+            size={19}
+            color={
+              pinned
+                ? "#F5C542"
+                : "#8B98A9"
+            }
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.smallAction}
+          onPress={() =>
+            deleteHistoryChat(item)
+          }
+        >
+          <Ionicons
+            name="trash-outline"
+            size={19}
+            color="#FF6577"
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+
+  function renderSideItem(
+    icon,
+    title,
+    onPress,
+    color = "#38BDF8"
+  ) {
+    return (
+      <TouchableOpacity
+        style={styles.sideItem}
+        onPress={onPress}
+      >
+        <Ionicons
+          name={icon}
+          size={23}
+          color={color}
+        />
+
+        <Text style={styles.sideItemText}>
+          {title}
+        </Text>
+
+        <Ionicons
+          name="chevron-forward"
+          size={17}
+          color="#536174"
+        />
+      </TouchableOpacity>
+    );
+  }
+
+
+  function renderPanel() {
+    if (!activePanel)
+      return null;
+
+    const title =
+      activePanel === "projects"
+        ? "Projects"
+        : activePanel === "library"
+        ? "Library"
+        : activePanel === "schedule"
+        ? "Schedule"
+        : activePanel === "images"
+        ? "Image Library"
+        : activePanel === "plugins"
+        ? "Plugins"
+        : activePanel === "remote"
+        ? "Remote"
+        : activePanel === "tools"
+        ? "AI Tools"
+        : "Panel";
+
+    return (
+      <Modal
+        visible={true}
+        animationType="slide"
+        transparent
+        onRequestClose={() =>
+          setActivePanel(null)
+        }
+      >
+        <View style={styles.panelBg}>
+          <View style={styles.panel}>
+            <View style={styles.panelHeader}>
+              <View>
+                <Text style={styles.panelTitle}>
+                  {title}
+                </Text>
+
+                <Text style={styles.panelSubtitle}>
+                  Gyan AI
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                onPress={() =>
+                  setActivePanel(null)
+                }
+              >
+                <Ionicons
+                  name="close"
+                  size={27}
+                  color="#FFFFFF"
+                />
+              </TouchableOpacity>
+            </View>
+
+            {activePanel ===
+              "projects" && (
+              <>
+                <TouchableOpacity
+                  style={styles.primaryButton}
+                  onPress={createProject}
+                >
+                  <Ionicons
+                    name="add"
+                    size={20}
+                    color="#FFFFFF"
+                  />
+                  <Text
+                    style={styles.primaryButtonText}
+                  >
+                    New Project
+                  </Text>
+                </TouchableOpacity>
+
+                <FlatList
+                  data={projects}
+                  keyExtractor={x =>
+                    String(x.id)
+                  }
+                  renderItem={({ item }) => (
+                    <View
+                      style={
+                        styles.simpleCard
+                      }
+                    >
+                      <Ionicons
+                        name="folder-outline"
+                        size={23}
+                        color="#38BDF8"
+                      />
+
+                      <Text
+                        style={
+                          styles.simpleCardText
+                        }
+                      >
+                        {item.name}
+                      </Text>
+                    </View>
+                  )}
+                  ListEmptyComponent={
+                    <Text
+                      style={
+                        styles.emptyText
+                      }
+                    >
+                      अभी कोई project नहीं है।
+                    </Text>
+                  }
+                />
+              </>
+            )}
+
+            {activePanel ===
+              "library" && (
+              <FlatList
+                data={library}
+                keyExtractor={(_, i) =>
+                  String(i)
+                }
+                renderItem={({ item }) => (
+                  <View
+                    style={
+                      styles.simpleCard
+                    }
+                  >
+                    <Ionicons
+                      name="document-outline"
+                      size={22}
+                      color="#38BDF8"
+                    />
+                    <Text
+                      style={
+                        styles.simpleCardText
+                      }
+                      numberOfLines={1}
+                    >
+                      {item.name}
+                    </Text>
+                  </View>
+                )}
+                ListEmptyComponent={
+                  <Text
+                    style={
+                      styles.emptyText
+                    }
+                  >
+                    Library अभी खाली है।
+                  </Text>
+                }
+              />
+            )}
+
+            {activePanel ===
+              "images" && (
+              <FlatList
+                data={imageLibrary}
+                keyExtractor={(_, i) =>
+                  String(i)
+                }
+                renderItem={({ item }) => (
+                  <View
+                    style={
+                      styles.simpleCard
+                    }
+                  >
+                    <Ionicons
+                      name="image-outline"
+                      size={22}
+                      color="#38BDF8"
+                    />
+                    <Text
+                      style={
+                        styles.simpleCardText
+                      }
+                      numberOfLines={1}
+                    >
+                      {item.name}
+                    </Text>
+                  </View>
+                )}
+                ListEmptyComponent={
+                  <Text
+                    style={
+                      styles.emptyText
+                    }
+                  >
+                    Image Library अभी खाली है।
+                  </Text>
+                }
+              />
+            )}
+
+            {activePanel ===
+              "schedule" && (
+              <>
+                <TouchableOpacity
+                  style={styles.primaryButton}
+                  onPress={createSchedule}
+                >
+                  <Ionicons
+                    name="alarm-outline"
+                    size={20}
+                    color="#FFFFFF"
+                  />
+                  <Text
+                    style={
+                      styles.primaryButtonText
+                    }
+                  >
+                    Add Reminder
+                  </Text>
+                </TouchableOpacity>
+
+                <Text
+                  style={
+                    styles.featureInfo
+                  }
+                >
+                  Voice-based reminders और
+                  scheduled notifications यहाँ
+                  manage होंगे।
+                </Text>
+
+                {schedule.map(
+                  (item, index) => (
+                    <View
+                      key={index}
+                      style={
+                        styles.simpleCard
+                      }
+                    >
+                      <Ionicons
+                        name="alarm-outline"
+                        size={22}
+                        color="#38BDF8"
+                      />
+                      <Text
+                        style={
+                          styles.simpleCardText
+                        }
+                      >
+                        {item.title ||
+                          "Reminder"}
+                      </Text>
+                    </View>
+                  )
+                )}
+              </>
+            )}
+
+            {activePanel ===
+              "tools" && (
+              <>
+                {[
+                  [
+                    "document-text-outline",
+                    "Make PDF",
+                  ],
+                  [
+                    "sparkles-outline",
+                    "AI Image Edit",
+                  ],
+                  [
+                    "videocam-outline",
+                    "AI Video Maker",
+                  ],
+                ].map(
+                  ([icon, name]) => (
+                    <TouchableOpacity
+                      key={name}
+                      style={
+                        styles.simpleCard
+                      }
+                      onPress={() =>
+                        openFutureFeature(
+                          name
+                        )
+                      }
+                    >
+                      <Ionicons
+                        name={icon}
+                        size={24}
+                        color="#38BDF8"
+                      />
+                      <Text
+                        style={
+                          styles.simpleCardText
+                        }
+                      >
+                        {name}
+                      </Text>
+                    </TouchableOpacity>
+                  )
+                )}
+              </>
+            )}
+
+            {(activePanel ===
+              "plugins" ||
+              activePanel ===
+                "remote") && (
+              <View>
+                <Ionicons
+                  name={
+                    activePanel ===
+                    "plugins"
+                      ? "extension-puzzle-outline"
+                      : "link-outline"
+                  }
+                  size={55}
+                  color="#38BDF8"
+                  style={{
+                    alignSelf:
+                      "center",
+                    marginTop: 40,
+                  }}
+                />
+
+                <Text
+                  style={
+                    styles.featureInfo
+                  }
+                >
+                  {activePanel ===
+                  "plugins"
+                    ? "Plugins यहाँ manage होंगे। Backend/plugin APIs बाद में जोड़ेंगे।"
+                    : "Remote connections यहाँ manage होंगे।"}
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+      </Modal>
+    );
+  }
