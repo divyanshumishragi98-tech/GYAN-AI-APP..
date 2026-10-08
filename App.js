@@ -365,74 +365,104 @@ function App() {
   }
 
   async function handleAuth() {
-    const u = authUsername.trim();
-    const p = authPassword;
+  const u = authUsername.trim();
+  const p = authPassword;
 
-    if (!u || !p) {
+  if (!u || !p) {
+    Alert.alert(
+      "Required",
+      "Username और password दोनों भरें।"
+    );
+    return;
+  }
+
+  setAuthLoading(true);
+
+  try {
+    const endpoint =
+      authMode === "login"
+        ? "/api/login"
+        : "/api/register";
+
+    const response = await fetch(`${API_BASE}${endpoint}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: u,
+        password: p,
+      }),
+    });
+
+    let data = {};
+
+    try {
+      data = await response.json();
+    } catch {
+      data = {};
+    }
+
+    console.log("AUTH STATUS:", response.status);
+    console.log("AUTH RESPONSE:", data);
+
+    if (!response.ok || !data?.success || !data?.token) {
+      const errorMessage =
+        data?.detail ||
+        data?.error ||
+        "Username या password गलत है।";
+
       Alert.alert(
-        "Required",
-        "Username और password दोनों भरें।"
+        authMode === "login"
+          ? "Login failed"
+          : "Registration failed",
+        errorMessage
       );
+
       return;
     }
 
-    setAuthLoading(true);
+    const user = data.user || {};
 
-    try {
-      const endpoint =
-        authMode === "login"
-          ? "/api/login"
-          : "/api/register";
+    await AsyncStorage.setItem(
+      TOKEN_KEY,
+      data.token
+    );
 
-      const data = await requestJson(
-        endpoint,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            username: u,
-            password: p,
-          }),
-        },
-        ""
-      );
+    await AsyncStorage.setItem(
+      USER_KEY,
+      JSON.stringify({
+        user_id: user.id || "",
+        username: user.username || u,
+      })
+    );
 
-      if (!data?.ok || !data?.token) {
-        Alert.alert(
-          authMode === "login" ? "Login failed" : "Registration failed",
-          data?.error || "कुछ गलत हो गया।"
-        );
-        return;
-      }
+    setToken(data.token);
+    setUsername(user.username || u);
 
-      await AsyncStorage.setItem(TOKEN_KEY, data.token);
-      await AsyncStorage.setItem(
-        USER_KEY,
-        JSON.stringify({
-          user_id: data.user_id,
-          username: data.username,
-        })
-      );
+    setAuthUsername("");
+    setAuthPassword("");
+    setMessages([]);
+    setConversationId(null);
+    setConversationTitle("New Chat");
 
-      setToken(data.token);
-      setUsername(data.username || u);
-      setAuthUsername("");
-      setAuthPassword("");
-      setMessages([]);
-      setConversationId(null);
+    await Promise.all([
+      loadHistory(data.token),
+      loadMemories(data.token),
+    ]);
 
-      await Promise.all([
-        loadHistory(data.token),
-        loadMemories(data.token),
-      ]);
-    } catch (error) {
-      Alert.alert(
-        "Network error",
-        "Server से connection नहीं हो पाया।"
-      );
-    } finally {
-      setAuthLoading(false);
-    }
+  } catch (error) {
+    console.log("AUTH ERROR:", error);
+
+    Alert.alert(
+      "Network error",
+      "Server से connection नहीं हो पाया।"
+    );
+  } finally {
+    setAuthLoading(false);
   }
+}
+      
 
   async function logout() {
     try {
